@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="typing.css">
+    <script src="typing.js" defer></script>
+    <title>YOUTHOOB TYPING TEST</title>
+</head>
+
+<body>
+
+
+    <div class="timer" id="timer">
+    </div>
+    <div class="container">
+        <div class="quote-display" id="quoteDisplay"></div>
+        <textarea id="quoteInput" class="quote-input" autofocus></textarea>
+    </div>
+    <br> <br> <br> <br> <br> <br> <br> <br> <br> <br>
+    <p>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            
+            body {
+                color: white;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                margin: 0;
+                background-color: #000000;
+            }
+            
+            body,
+            .quote-input {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+            
+            .container {
+                background-color: #ff0000;
+                padding: 1rem;
+                border-radius: .5rem;
+                width: 900px;
+                max-width: 90%;
+            }
+            
+            .timer {
+                position: absolute;
+                top: 2rem;
+                font-size: 6rem;
+                color: #ff0000;
+                font-weight: bold;
+            }
+            
+            .quote-display {
+                margin-bottom: 1rem;
+                margin-left: calc(1rem + 2px);
+                margin-right: calc(1rem + 2px);
+                font-size: 1.5rem;
+                font-weight: bold;
+            }
+            
+            .quote-input {
+                background-color: transparent;
+                border: 5px black;
+                outline: none;
+                width: 100%;
+                height: 10rem;
+                margin: auto;
+                resize: none;
+                padding: .5rem 1rem;
+                font-size: 1.5rem;
+                border-radius: .5rem;
+            }
+            
+            .quote-input:focus {
+                border-color: black;
+            }
+            
+            .correct {
+                color: rgb(242, 255, 0);
+            }
+            
+            .incorrect {
+                color: blue;
+                text-decoration: underline;
+            }
+            
+            .incorr {
+                color: blue;
+            }
+            
+            .corr {
+                color: yellow;
+            }
+        </style>
+        <script>
+            const RANDOM_QUOTE_API_URL = 'https://api.quotable.io/random'
+            const quoteDisplayElement = document.getElementById('quoteDisplay')
+            const quoteInputElement = document.getElementById('quoteInput')
+            const timerElement = document.getElementById('timer')
+
+            quoteInputElement.addEventListener('input', () => {
+                const arrayQuote = quoteDisplayElement.querySelectorAll('span')
+                const arrayValue = quoteInputElement.value.split('')
+
+                let correct = true
+                arrayQuote.forEach((characterSpan, index) => {
+                    const character = arrayValue[index]
+                    if (character == null) {
+                        characterSpan.classList.remove('correct')
+                        characterSpan.classList.remove('incorrect')
+                        correct = false
+                    } else if (character === characterSpan.innerText) {
+                        characterSpan.classList.add('correct')
+                        characterSpan.classList.remove('incorrect')
+                    } else {
+                        characterSpan.classList.remove('correct')
+                        characterSpan.classList.add('incorrect')
+                        correct = false
+                    }
+                })
+
+                if (correct) renderNewQuote()
+            })
+
+            function getRandomQuote() {
+                return fetch(RANDOM_QUOTE_API_URL)
+                    .then(response => response.json())
+                    .then(data => data.content)
+            }
+
+            async function renderNewQuote() {
+                const quote = await getRandomQuote()
+                quoteDisplayElement.innerHTML = ''
+                quote.split('').forEach(character => {
+                    const characterSpan = document.createElement('span')
+                    characterSpan.innerText = character
+                    quoteDisplayElement.appendChild(characterSpan)
+                })
+                quoteInputElement.value = null
+                startTimer()
+            }
+
+            let startTime
+
+            function startTimer() {
+                timerElement.innerText = 0
+                startTime = new Date()
+                setInterval(() => {
+                    timer.innerText = getTimerTime()
+                }, 1000)
+            }
+
+            function getTimerTime() {
+                return Math.floor((new Date() - startTime) / 1000)
+            }
+
+            renderNewQuote()
+        </script>
+</body>
+
+</html>
